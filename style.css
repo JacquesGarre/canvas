@@ -1,0 +1,8 @@
+body {
+    background:black;
+}
+canvas {
+    display: block;
+    margin: 0 auto;
+    outline: 1px solid darkgray;
+}
