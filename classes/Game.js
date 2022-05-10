@@ -22,8 +22,17 @@ class Game {
                 game.homeMenu(); // homeMenu
             },
             2: function(){ 
+                game.zoneDrawingInstructions(); // Instructions : players will draw their zone
+            },
+            3: function(){ 
                 game.zoneDrawing(); // players will draw their zone
-            }
+            },
+            4: function(){ 
+                game.charactersPlacingInstructions(); // Instructions : players will place their characters
+            },
+            5: function(){ 
+                game.charactersPlacing(); // players will place their characters
+            },
         }
     }
 
@@ -55,8 +64,13 @@ class Game {
 
         // init the players
         for (const playerSettings of this.settings.players) {
-            this.players.push(new Player(this, playerSettings))
+            var player = new Player(this, playerSettings);
+            this.players.push(player)
+            state.players.push(player)
         }
+
+        console.log(state.players)
+
 
         // Init first player
         state.currentPlayer = this.players[state.currentPlayerID];
@@ -179,20 +193,61 @@ class Game {
         state.currentStep++;
     }
 
+    zoneDrawingInstructions()
+    {
+        if(this.settings.instructions.skip){
+            state.currentStep = 3;
+            return false;
+        }
+
+        var transition = new Transition(this, {
+            message: state.players[state.currentPlayerID].name + ' : Build your base!',
+            customSettings: {}
+        })
+        transition.show();
+        setTimeout(function(){
+            state.currentStep = 3;
+        }, this.settings.instructions.duration)
+    }
+
     // Players draw their zone
     zoneDrawing()
     {   
-
 
         // Draw map
         this.map.draw();
 
         // Zone drawing is done for each player, go to next step
-        if(state.zoneDrawing.done){
-            state.currentStep++;
+
+    }
+
+    charactersPlacingInstructions()
+    {
+        if(this.settings.instructions.skip){
+            state.currentStep = 5;
+            return false;
         }
+
+        var transition = new Transition(this, {
+            message: state.players[state.currentPlayerID].name + ' : Place your characters in your base!',
+            customSettings: {}
+        })
+        transition.show();
+        setTimeout(function(){
+            state.currentStep = 5;
+        }, this.settings.instructions.duration)
     }
 
 
+    // Players place their characters
+    charactersPlacing()
+    {   
+
+        // Draw map
+        this.map.draw();
+
+        // Zone drawing is done for each player, go to next step
+
+    }
 
 }

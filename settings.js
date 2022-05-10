@@ -7,25 +7,39 @@ const settings = {
 
     // Game settings
     playerStartWith: {
-        floorTilesCount: 4 // Number of floor tiles a player will have to draw his zone
+        floorTilesCount: 9 // Number of floor tiles a player will have to draw his zone
     },
 
     // Players info
     players: [
         {
             id:0,
-            name: 'Player1'
+            name: 'Player 1'
         },
         {
             id:1,
-            name: 'Player2'
-        }
+            name: 'Player 2'
+        },
+        // {
+        //     id:2,
+        //     name: 'Player3'
+        // }
+        // {
+        //     id:3,
+        //     name: 'Player4'
+        // }
     ],
     
     // Intro
     intro: {
         skip: true, // false
         duration: 5000,
+    },
+
+    // Show instructions
+    instructions: {
+        skip: false,
+        duration: 1000
     },
 
     // Screen settings
@@ -66,7 +80,8 @@ const settings = {
             bottomEven: 'assets/map/bottom-even.png',
             middleOdd: 'assets/map/middle-odd.png',
             middleEven: 'assets/map/middle-even.png',
-            zone: 'assets/map/zone.png'
+            zone: 'assets/map/zone.png',
+            wall: 'assets/map/top-wall.png'
         }
     },
 

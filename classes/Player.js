@@ -4,9 +4,8 @@ class Player {
         this.game = game;
         this.id = playerSettings.id;
         this.name = playerSettings.name;
-        this.state = {
-            hasDrawnHisZone: false
-        }
+        this.zoneTilesLeft = game.settings.playerStartWith.floorTilesCount
+        this.tiles = [];
     }
 
 

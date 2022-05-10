@@ -15,8 +15,12 @@
             currentStep:0, // Current step of the intro
         },
         zoneDrawing: {
-            done: false // Is the zone drawing step done?
-        }
+            done: false // Is the zone drawing done?
+        },
+        charactersPlacing: {
+            done: false // Are the characters placed ?
+        },
+        players: []
     }
 
     // Init game

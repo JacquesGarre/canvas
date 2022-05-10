@@ -52,13 +52,23 @@ class Tile {
             this.screen.stroke()
         }
 
-        if(!this.isHovered()){
-            this.drawSprite();
-        }
 
-        // Click on tile when zoneDrawing step
-        if(this.isClicked() && state.currentStep == 2){
-            this.spriteType = 'zone';
+        // Click acts differently for each step
+        switch(state.currentStep){
+
+            // STEP 3 : DRAWING ZONE = A click will draw a tile and lower the zoneTilesLeft property
+            case 3:
+                this.drawingZone()
+            break;
+            case 5:
+                this.drawWallsAroundZone();
+            break;
+
+
+            default:
+                this.drawSprite();
+
+
         }
         
 
@@ -75,8 +85,8 @@ class Tile {
     }
 
     // Draws sprite
-    drawSprite() {
-        this.sprite = this.settings.tileSprites[this.spriteType];
+    drawSprite(spriteType = false) {
+        this.sprite = !spriteType ? this.settings.tileSprites[this.spriteType] : this.settings.tileSprites[spriteType];
         this.screen.drawImage(
             this.sprite, 
             this.x * this.width, 
@@ -123,5 +133,135 @@ class Tile {
         return this.x == this.settings.map.x-1;
     }
 
+    drawWallsAroundZone() {
+
+        if(this.isWall()){
+            // draw basic sprite 
+            this.drawSprite('wall');
+        } else {
+            // draw basic sprite 
+            this.drawSprite();
+        }
+
+        
+
+
+    }
+
+    // Is the current tile touching a "zone" tile?
+    isWall() {
+        
+        // top-left
+        if(
+            this.x-1 >= 0 && this.y-1 >= 0 
+            && state.currentPlayer.tiles[this.x-1][this.y-1].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x-1][this.y-1].type == 'floor'
+        ){
+            return true;
+        }
+        // top
+        if(
+            this.y-1 >= 0 
+            && state.currentPlayer.tiles[this.x][this.y-1].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x][this.y-1].type == 'floor'
+        ){
+            return true;
+        }
+        // top-right
+        if( 
+            this.x+1 < state.currentPlayer.tiles.length && this.y-1 >= 0 
+            && state.currentPlayer.tiles[this.x+1][this.y-1].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x+1][this.y-1].type == 'floor'
+        ){
+            return true;
+        }
+        // right
+        if( 
+            this.x+1 < state.currentPlayer.tiles.length
+            && state.currentPlayer.tiles[this.x+1][this.y].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x+1][this.y].type == 'floor'
+            ){
+            return true;
+        }
+        // bottom-right
+        if(
+            this.x+1 < state.currentPlayer.tiles.length && this.y+1 < state.currentPlayer.tiles[this.x+1].length
+            && state.currentPlayer.tiles[this.x+1][this.y+1].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x+1][this.y+1].type == 'floor'
+        ){
+            return true;
+        }
+        // bottom
+        if( 
+            this.y+1 < state.currentPlayer.tiles[this.x].length
+            && state.currentPlayer.tiles[this.x][this.y+1].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x][this.y+1].type == 'floor'
+        ){
+            return true;
+        }
+        // bottom-left
+        if(
+            this.x-1 >= 0 && this.y+1 < state.currentPlayer.tiles[this.x-1].length
+            && state.currentPlayer.tiles[this.x-1][this.y+1].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x-1][this.y+1].type == 'floor'
+        ){
+            return true;
+        }
+        // left
+        if( 
+            this.x-1 >= 0
+            && state.currentPlayer.tiles[this.x-1][this.y].spriteType == 'zone' 
+            && state.currentPlayer.tiles[this.x-1][this.y].type == 'floor'
+        ){
+            return true;
+        }
+
+        return false;
+
+    }
+
+    drawingZone() {
+        if(!state.zoneDrawing.done){
+
+            if(!this.isHovered()){
+                this.drawSprite();
+            } else {
+                this.drawSprite('zone');
+            }
+
+            // If current player still has tiles to draw and is clicking on a floor tile
+            if(this.spriteType != 'zone' && this.isClicked() && state.players[state.currentPlayerID].zoneTilesLeft > 0){
+                this.spriteType = 'zone';
+                state.players[state.currentPlayerID].zoneTilesLeft -= 1;
+                state.mouseClicked = false;
+
+            // Else go to next player
+            } else if(state.players[state.currentPlayerID].zoneTilesLeft == 0) {
+                
+                // Test is step is finish, did all the players placed their tiles?
+                state.zoneDrawing.done = true;
+                for(var i = 0; i <= state.players.length - 1; i++){
+                    if(state.players[i].zoneTilesLeft > 0){
+                        state.zoneDrawing.done = false;
+                    }
+                }
+
+                // Go to next player
+                state.currentPlayerID = (state.currentPlayerID+1) % state.players.length
+
+                // if players have drawn their zones,
+                if(!state.zoneDrawing.done){
+                    // Step 2 will show instructions for next player
+                    state.currentStep = 2;
+
+                }
+
+            }
+
+        } else {
+            // Step 4 will show instructions for next player and next turn
+            state.currentStep = 4;
+        }
+    }
 
 }

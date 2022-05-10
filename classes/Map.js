@@ -58,11 +58,13 @@ class Map {
 
     drawFloorTiles()
     {   
-        if(state.tiles == undefined){
-            state.tiles = [];
+        state.currentPlayer = state.players[state.currentPlayerID];
+
+        if(state.players[state.currentPlayerID].tiles == undefined || state.players[state.currentPlayerID].tiles.length == 0){
+            state.players[state.currentPlayerID].tiles = [];
             var tileID = 0;
             for(var x = 0; x <= this.settings.map.x - 1; x++){
-                state.tiles[x] = [];
+                state.players[state.currentPlayerID].tiles[x] = [];
                 for(var y = 0; y <= this.settings.map.y - 1; y++){
                     var tile = new Tile(tileID, this.settings, {
                         type: 'floor',
@@ -73,17 +75,20 @@ class Map {
                     }, this.screen);
                     tile.draw();
                     this.tiles.push(tile);
-                    state.tiles[x][y] = tile;
+                    state.players[state.currentPlayerID].tiles[x][y] = tile;
                     tileID++;            
                 }
             }
         } else {
-            for(var x = 0; x <= state.tiles.length - 1; x++){
-                for(var y = 0; y <= state.tiles[x].length - 1; y++){
-                    state.tiles[x][y].draw()
+            for(var x = 0; x <= state.currentPlayer.tiles.length - 1; x++){
+                for(var y = 0; y <= state.currentPlayer.tiles[x].length - 1; y++){
+                    state.currentPlayer.tiles[x][y].draw()
                 }
             }
         }
+
+
+        
     }
 
 }
